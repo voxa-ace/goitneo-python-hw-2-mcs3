@@ -21,20 +21,6 @@ def input_error(func):
             return "Command requires more arguments."
     return inner
 
-
-def contact_not_found_error(func):
-    """
-    A decorator to handle contact not found error and provide an error message.
-
-    """
-    def inner(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except KeyError:
-            return "Contact not found."
-    return inner
-
-
 def parse_input(user_input):
     """
     Parse user input into a command and arguments.
@@ -43,7 +29,6 @@ def parse_input(user_input):
     cmd, *args = user_input.strip().lower().split()
     cmd = cmd.strip().lower()
     return cmd, *args
-
 
 def is_valid_name(name, contacts):
     """
@@ -54,7 +39,6 @@ def is_valid_name(name, contacts):
         raise KeyError("Contact not found.")
     return name
 
-
 def is_valid_contact(name, contacts):
     """
     Check if a contact name already exists in the contacts.
@@ -64,7 +48,7 @@ def is_valid_contact(name, contacts):
         raise ValueError("Contact already exists.")
     return name
 
-
+@input_error
 def add_contact(args, contacts):
     """
     Add a contact to the contacts dictionary.
@@ -76,6 +60,7 @@ def add_contact(args, contacts):
     return "Contact added."
 
 
+@input_error
 def change_contact(args, contacts):
     """
     Change the phone number of an existing contact.
@@ -86,15 +71,17 @@ def change_contact(args, contacts):
     contacts[name] = new_phone
     return "Contact updated."
 
-
+@input_error
 def show_phone(args, contacts):
     """
     Show the phone number of an existing contact.
 
     """
+    if not args:
+        raise IndexError("Command requires a name argument.")
+
     name = args[0]
     return contacts.get(name, "Contact not found")
-
 
 def show_all(contacts):
     """
@@ -105,7 +92,6 @@ def show_all(contacts):
     for name, phone in contacts.items():
         contacts_str += f"{name}: {phone}\n"
     return contacts_str.rstrip()
-
 
 def main():
     """
@@ -133,7 +119,6 @@ def main():
             print(show_all(contacts))
         else:
             print("Invalid command.")
-
 
 if __name__ == "__main__":
     main()
